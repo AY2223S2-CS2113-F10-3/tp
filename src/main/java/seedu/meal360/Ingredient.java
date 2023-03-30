@@ -8,12 +8,10 @@ public class Ingredient {
     public Integer ingredientCount;
     public LocalDate expiryDate;
     public Boolean expired;
-    private String unit;
 
-    public Ingredient(String ingredientName, Integer ingredientCount, String unit, String expiryDate) {
+    public Ingredient(String ingredientName, Integer ingredientCount, String expiryDate) {
         this.ingredientName = ingredientName;
         this.ingredientCount = ingredientCount;
-        this.unit = unit;
         // parse expiry date using parseDate method
         this.expiryDate = parser.parseDate(expiryDate);
         this.updateExpired();

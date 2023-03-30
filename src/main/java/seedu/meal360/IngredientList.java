@@ -48,10 +48,16 @@ public class IngredientList extends HashMap<String, Ingredient> {
         }
     }
 
-    public void deleteIngredient(String ingredient) {
+    public void deleteIngredient(String ingredient, Integer ingredientCount) {
         try {
             if (this.containsKey(ingredient)) {
-                this.remove(ingredient);
+                int currentCount = this.get(ingredient).ingredientCount;
+                int newCount = currentCount - ingredientCount;
+                if (newCount > 0) {
+                    this.get(ingredient).ingredientCount = newCount;
+                } else {
+                    this.remove(ingredient);
+                }
             }
             throw new Exceptions.IngredientNotFoundException();
         } catch (Exceptions.IngredientNotFoundException e) {

@@ -6,8 +6,12 @@ Welcome to Meal360, your ultimate Recipe Manager!
 |_|  |_\___\__,_|_|___/\___/\__/
 
 ----------------------------------------------------------------------------------------------------
-| Loading database...                                                                              |
-| Database loaded successfully.                                                                    |
+| Loading recipes...                                                                               |
+| Recipes loaded successfully.                                                                     |
+| Loading weekly plan...                                                                           |
+| Weekly plan loaded successfully.                                                                 |
+| Loading ingredients...                                                                           |
+| Ingredients loaded successfully.                                                                 |
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 | These are the recipes you have (10 recipes):                                                     |
@@ -121,13 +125,17 @@ Welcome to Meal360, your ultimate Recipe Manager!
 | Your weekly plan is empty!                                                                       |
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
-| Please indicate a valid recipe name.                                                             |
+| Please enter a valid number as the last argument.                                                |
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
 | Your weekly plan is empty!                                                                       |
 ----------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
-| Saving database...                                                                               |
+| Saving recipes...                                                                                |
 | Database saved successfully.                                                                     |
+| Saving weekly plan...                                                                            |
+| Weekly plan saved successfully.                                                                  |
+| Saving ingredients...                                                                            |
+| Ingredients saved successfully.                                                                  |
 | Bye. Hope to see you again soon!                                                                 |
 ----------------------------------------------------------------------------------------------------

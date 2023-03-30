@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.8.9'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.0'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.0'
 }
@@ -42,7 +42,7 @@ checkstyle {
     toolVersion = '10.2'
 }
 
-run{
+run {
     standardInput = System.in
     enableAssertions = true
 }
@@ -55,4 +55,13 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+tasks.withType(Copy).all { duplicatesStrategy 'exclude' }
+
+sourceSets {
+    main.java.srcDirs 'src/main/java'
+    main.resources.srcDirs 'src/main/resources'
+    test.java.srcDirs 'src/test/java'
+    test.resources.srcDirs 'src/test/resources'
 }

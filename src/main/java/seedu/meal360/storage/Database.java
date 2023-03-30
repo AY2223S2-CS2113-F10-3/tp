@@ -1,70 +1,57 @@
-package seedu.meal360;
+package seedu.meal360.storage;
 
-import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import seedu.meal360.IngredientList;
+import seedu.meal360.Recipe;
+import seedu.meal360.RecipeList;
+import seedu.meal360.WeeklyPlan;
 
 public class Database {
 
     private static final String recipesDatabaseFilepath =
-            "." + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + "main"
-                    + System.getProperty("file.separator") + "resources" + System.getProperty(
-                    "file.separator") + "recipesDatabase.json";
+            "." + System.getProperty("file.separator") + "database" + System.getProperty("file.separator")
+                    + "recipesDatabase.json";
 
-    public RecipeList loadDatabase() throws IOException {
-        RecipeList database;
-        Gson gson = new Gson();
+    private static final String weeklyPlanDatabaseFilepath =
+            "." + System.getProperty("file.separator") + "database" + System.getProperty("file.separator")
+                    + "weeklyPlanDatabase.json";
 
-        // Check if the JSON file exists and create one if it does not
-        File file = new File(recipesDatabaseFilepath);
-        if (!file.exists()) {
-            try {
-                // Create the parent directory if it does not exist
-                File parentDir = file.getParentFile();
-                if (!parentDir.exists()) {
-                    parentDir.mkdirs();
-                }
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new IOException("Error creating database file.");
-            }
+    private static final String userIngredientsDatabaseFilepath =
+            "." + System.getProperty("file.separator") + "database" + System.getProperty(
+                    "file.separator") + "userIngredientsDatabase.json";
 
-            // Return a default recipe list if database file does not exist
-            return defaultRecipeList();
-        }
+    JsonDatabaseHelper<RecipeList> recipeListJsonDatabaseHelper = new JsonDatabaseHelper<>(
+            recipesDatabaseFilepath, defaultRecipeList(), RecipeList.class);
 
-        // Read the JSON data from the file if it already exists
-        try {
-            // Read the JSON data from the file
-            BufferedReader reader = new BufferedReader(new FileReader(recipesDatabaseFilepath));
-            database = gson.fromJson(reader, RecipeList.class);
-            reader.close();
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Unable to find database file.");
-        } catch (IOException e) {
-            throw new IOException("Error reading from database file.");
-        }
+    JsonDatabaseHelper<WeeklyPlan> weeklyPlanJsonDatabaseHelper = new JsonDatabaseHelper<>(
+            weeklyPlanDatabaseFilepath, new WeeklyPlan(), WeeklyPlan.class);
 
-        // Ensure non empty recipeList is returned
-        if (database == null) {
-            return defaultRecipeList();
-        } else {
-            return database;
-        }
+    JsonDatabaseHelper<IngredientList> userIngredientsJsonDatabaseHelper = new JsonDatabaseHelper<>(
+            userIngredientsDatabaseFilepath, new IngredientList(), IngredientList.class);
+
+    public RecipeList loadRecipesDatabase() throws IOException {
+        return recipeListJsonDatabaseHelper.loadDatabase();
     }
 
-    public void saveDatabase(RecipeList recipeList) throws IOException {
-        Gson gson = new Gson();
-        // Write the data object to the JSON file
-        FileWriter writer;
-        writer = new FileWriter(recipesDatabaseFilepath);
-        gson.toJson(recipeList, writer);
-        writer.close();
+    public void saveRecipesDatabase(RecipeList recipeList) throws IOException {
+        recipeListJsonDatabaseHelper.saveDatabase(recipeList);
+    }
+
+    public WeeklyPlan loadWeeklyPlanDatabase() throws IOException {
+        return weeklyPlanJsonDatabaseHelper.loadDatabase();
+    }
+
+    public void saveWeeklyPlanDatabase(WeeklyPlan weeklyPlan) throws IOException {
+        weeklyPlanJsonDatabaseHelper.saveDatabase(weeklyPlan);
+    }
+
+    public IngredientList loadUserIngredientsDatabase() throws IOException {
+        return userIngredientsJsonDatabaseHelper.loadDatabase();
+    }
+
+    public void saveIngredientsDatabase(IngredientList userIngredients) throws IOException {
+        userIngredientsJsonDatabaseHelper.saveDatabase(userIngredients);
     }
 
     public RecipeList defaultRecipeList() {

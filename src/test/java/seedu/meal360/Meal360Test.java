@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seedu.meal360.exceptions.InvalidNegativeValueException;
 import seedu.meal360.exceptions.InvalidRecipeNameException;
+import seedu.meal360.storage.Database;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -207,7 +208,7 @@ class Meal360Test {
         int newWeeklyPlanSize = weeklyPlan.size();
         assertEquals(oldWeeklyPlanSize, newWeeklyPlanSize);
         toDelete.clear();
-        toDelete.put("salad", 0);
+        toDelete.put("salad", 1);
         weeklyPlan.deletePlans(toDelete);
         newWeeklyPlanSize = weeklyPlan.size();
         assertEquals(oldWeeklyPlanSize - 1, newWeeklyPlanSize);
@@ -222,20 +223,21 @@ class Meal360Test {
 
         // Testing delete recipe from weekly plan
         WeeklyPlan recipeMap = parser.parseWeeklyPlan(
-                new String[]{"weekly", "/multidelete", "/r", "burger", "/r", "pizza"}, recipes);
+                new String[]{"weekly", "/multidelete", "/r", "burger", "/q", "1", "/r", "pizza", "/q", "1"},
+                recipes);
         weeklyPlan.deletePlans(recipeMap);
-        assertEquals(1, weeklyPlan.size());
+        assertEquals(3, weeklyPlan.size());
 
         // Testing exceptions
         weeklyPlan.put("pizza", 3);
         weeklyPlan.put("burger", 100);
         assertThrows(InvalidRecipeNameException.class, () -> parser.parseWeeklyPlan(
-                new String[]{"weekly", "/multidelete", "/r", "burgers", "/r", "pizza"}, recipes));
+                new String[]{"weekly", "/multidelete", "/r", "burgers", "/q", "2"}, recipes));
 
         assertThrows(IllegalArgumentException.class, () -> parser.parseWeeklyPlan(
                 new String[]{"weekly", "/multidelete", "burger", "pizza", "salad"}, recipes));
 
-        assertThrows(InvalidRecipeNameException.class, () -> parser.parseWeeklyPlan(
+        assertThrows(IllegalArgumentException.class, () -> parser.parseWeeklyPlan(
                 new String[]{"weekly", "/multidelete", "/r", "burger", "/q", "1", "/r", "pizza"}, recipes));
     }
 
@@ -418,6 +420,6 @@ class Meal360Test {
 
     @Test
     public void testLoadDatabase() {
-        assertDoesNotThrow(database::loadDatabase);
+        assertDoesNotThrow(database::loadRecipesDatabase);
     }
 }

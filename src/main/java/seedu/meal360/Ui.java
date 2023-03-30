@@ -1,5 +1,7 @@
 package seedu.meal360;
 
+import java.time.format.DateTimeFormatter;
+
 public class Ui {
 
     private static final int BOXWIDTH = 100;
@@ -114,6 +116,28 @@ public class Ui {
         printMessage("3. Edit Recipe: edit {index number} or view /r {recipe name}");
         printMessage("4. Delete Recipe: delete {index number} or view /r {recipe name}");
         printMessage("5. List All Recipes: list");
-        printMessage("6. Exit: bye");
+        printMessage("6. Add Single Recipe to Weekly Plan: add {recipe name} {quantity}");
+        printMessage("7. Add Multiple Recipes to Weekly Plan: add /r {recipe name} /q {quantity}");
+        printMessage("   /r {recipe name} /q {quantity} ...");
+        printMessage("8. Delete Single Recipe from Weekly Plan: delete {recipe name} {quantity}");
+        printMessage("9. Delete Multiple Recipes from Weekly Plan: delete /r {recipe name} /q");
+        printMessage("   {quantity} /r {recipe name} /q {quantity} ...");
+        printMessage("10. View Weekly Plan: weeklyplan");
+        printMessage("11. Exit: bye");
+    }
+
+    public void printUserIngredients(IngredientList userIngredients) {
+        if (userIngredients.isEmpty()) {
+            printMessage("Your ingredient list is empty!");
+        } else {
+            printMessage("Here is your ingredient list:");
+            userIngredients.forEach((name, ingredient) -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                String formattedDate = ingredient.expiryDate.format(formatter);
+                String outputMessage = String.format("%s (%d) [by:%s]", name, ingredient.ingredientCount,
+                        formattedDate);
+                System.out.println(formatMessage(outputMessage));
+            });
+        }
     }
 }

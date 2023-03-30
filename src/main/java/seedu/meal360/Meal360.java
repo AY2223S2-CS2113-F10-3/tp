@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import seedu.meal360.exceptions.InvalidNegativeValueException;
 import seedu.meal360.exceptions.InvalidRecipeNameException;
+import seedu.meal360.storage.Database;
 
 public class Meal360 {
 
@@ -16,22 +17,45 @@ public class Meal360 {
     private static final Parser parser = new Parser();
     private static final Database database = new Database();
     private static RecipeList recipeList = new RecipeList();
-    private static final WeeklyPlan weeklyPlan = new WeeklyPlan();
+    private static WeeklyPlan weeklyPlan = new WeeklyPlan();
+
+    private static IngredientList userIngredients = new IngredientList();
 
     public static void startApp() {
         ui.printSeparator();
         ui.printWelcomeMessage();
         ui.printSeparator();
 
-        // Load database
-        ui.printMessage("Loading database...");
+        // Load databases
         try {
-            recipeList = database.loadDatabase();
-            ui.printMessage("Database loaded successfully.");
+            ui.printMessage("Loading recipes...");
+            recipeList = database.loadRecipesDatabase();
+            ui.printMessage("Recipes loaded successfully.");
         } catch (Exception e) {
-            ui.printMessage("Error loading database, loading default database instead.");
-            ui.printMessage("Overwriting database with new default database...");
+            ui.printMessage("Error loading recipes, loading default recipes instead.");
             recipeList = database.defaultRecipeList();
+        }
+
+        try {
+            ui.printMessage("Loading weekly plan...");
+            weeklyPlan = database.loadWeeklyPlanDatabase();
+            boolean isClean = weeklyPlan.checkValidity(recipeList);
+            if (!isClean) {
+                ui.printMessage("Weekly plan has invalid recipes, removing them...");
+            }
+            ui.printMessage("Weekly plan loaded successfully.");
+        } catch (Exception e) {
+            ui.printMessage("Error loading weekly plan, loading default empty weekly plan instead.");
+            weeklyPlan = new WeeklyPlan();
+        }
+
+        try {
+            ui.printMessage("Loading ingredients...");
+            userIngredients = database.loadUserIngredientsDatabase();
+            ui.printMessage("Ingredients loaded successfully.");
+        } catch (Exception e) {
+            ui.printMessage("Error loading ingredients, loading default empty list of ingredients instead.");
+            userIngredients = new IngredientList();
         }
 
         ui.printSeparator();
@@ -173,6 +197,28 @@ public class Meal360 {
             ui.printSeparator();
             ui.printWeeklyPlan(weeklyPlan);
             ui.printSeparator();
+        } else if (command[0].equals("add_i")) {
+            ui.printSeparator();
+            try {
+                parser.parseAddUserIngredients(command, userIngredients);
+                ui.printMessage("Ingredient successfully added!");
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                ui.printMessage(e.getMessage());
+            }
+            ui.printSeparator();
+        } else if (command[0].equals("del_i")) {
+            ui.printSeparator();
+            try {
+                parser.parseDeleteUserIngredients(command, userIngredients);
+                ui.printMessage("Ingredients successfully deleted!");
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                ui.printMessage(e.getMessage());
+            }
+            ui.printSeparator();
+        } else if (command[0].equals("view_ingredients")) {
+            ui.printSeparator();
+            ui.printUserIngredients(userIngredients);
+            ui.printSeparator();
         } else if (command[0].equals("help")) {
             ui.printSeparator();
             ui.printHelp();
@@ -188,12 +234,30 @@ public class Meal360 {
         ui.printSeparator();
 
         // Save database
-        ui.printMessage("Saving database...");
+        ui.printMessage("Saving recipes...");
         try {
-            database.saveDatabase(recipeList);
+            database.saveRecipesDatabase(recipeList);
             ui.printMessage("Database saved successfully.");
         } catch (IOException error) {
             ui.printMessage("Error saving database.");
+        }
+
+        // Save weekly plan
+        ui.printMessage("Saving weekly plan...");
+        try {
+            database.saveWeeklyPlanDatabase(weeklyPlan);
+            ui.printMessage("Weekly plan saved successfully.");
+        } catch (IOException error) {
+            ui.printMessage("Error saving weekly plan.");
+        }
+
+        // Save ingredients
+        ui.printMessage("Saving ingredients...");
+        try {
+            database.saveIngredientsDatabase(userIngredients);
+            ui.printMessage("Ingredients saved successfully.");
+        } catch (IOException error) {
+            ui.printMessage("Error saving ingredients.");
         }
 
         ui.printGoodbyeMessage();
@@ -201,7 +265,6 @@ public class Meal360 {
     }
 
     public static void main(String[] args) {
-
         startApp();
 
         String line;
