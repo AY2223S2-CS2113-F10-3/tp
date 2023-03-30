@@ -29,7 +29,7 @@ public class Meal360 {
         // Load databases
         try {
             ui.printMessage("Loading recipes...");
-            recipeList = database.loadRecipesDatabase();
+            recipeList = database.defaultRecipeList();
             ui.printMessage("Recipes loaded successfully.");
         } catch (Exception e) {
             ui.printMessage("Error loading recipes, loading default recipes instead.");
