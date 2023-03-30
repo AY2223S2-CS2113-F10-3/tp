@@ -38,6 +38,27 @@ public class Ui {
             System.out.println(formatMessage(index + ". " + outputMessage));
             index++;
         }
+        int numOfTag = recipe.getTags().size();
+        if (numOfTag != 0)  {
+            printRecipeTag(recipe);
+        }
+    }
+
+    public void printRecipeTag(Recipe recipe) {
+        int numOfTag = recipe.getTags().size();
+        StringBuilder tagOutputMessage = new StringBuilder();
+        int tagIndex = 1;
+        System.out.println(formatMessage(""));
+        tagOutputMessage.append("Tags: ");
+        for (String tag : recipe.getTags()) {
+            if (tagIndex == numOfTag) {
+                tagOutputMessage.append(tag);
+            } else {
+                tagOutputMessage.append(tag).append(", ");
+            }
+            System.out.println(formatMessage(tagOutputMessage.toString()));
+            tagIndex++;
+        }
     }
 
     public void printWeeklyPlan(WeeklyPlan weeklyPlan) {

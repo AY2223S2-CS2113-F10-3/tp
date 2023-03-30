@@ -1,11 +1,13 @@
 package seedu.meal360;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 public class RecipeList extends ArrayList<Recipe> {
-    public HashMap<String, HashMap<Recipe, Integer>> tags = new HashMap<>();
+    public HashMap<String, HashSet<Recipe>> tags = new HashMap<>();
 
     public Recipe findByName(String name) {
         for (Recipe recipe : this) {
@@ -32,21 +34,22 @@ public class RecipeList extends ArrayList<Recipe> {
 
     public void addRecipeToTag(String tag, Recipe recipe) {
         boolean hasTag = tags.containsKey(tag);
-        int tagDummy = 0;
         if (hasTag) {
-            tags.get(tag).put(recipe, tagDummy);
+            tags.get(tag).add(recipe);
+            recipe.setTags(tag);
         } else {
             assert !tags.containsKey(tag);
-            HashMap<Recipe, Integer> tagRecipes = new HashMap<>();
-            tagRecipes.put(recipe, tagDummy);
+            HashSet<Recipe> tagRecipes = new HashSet<>();
+            tagRecipes.add(recipe);
             tags.put(tag, tagRecipes);
+            recipe.setTags(tag);
             assert tags.size() > 0 : "tag's size is still 0.";
         }
     }
 
     public void removeRecipeFromTag(String tag, Recipe recipe) {
-        HashMap<Recipe, Integer> tagRecipeList = tags.get(tag);
-        boolean isAbleToFindTheRecipe =  tagRecipeList.containsKey(recipe);
+        HashSet<Recipe> tagRecipeList = tags.get(tag);
+        boolean isAbleToFindTheRecipe = tagRecipeList.contains(recipe);
         if (!isAbleToFindTheRecipe) {
             String errorMessage1 = "Unable to find the recipe: \"" + recipe.getName() +"\" in the" +
                     " tag.";
@@ -55,6 +58,7 @@ public class RecipeList extends ArrayList<Recipe> {
             throw new IndexOutOfBoundsException(String.format("%-97s|\n| %-97s", errorMessage1, errorMessage2));
         }
         tagRecipeList.remove(recipe);
+        recipe.getTags().remove(tag);
     }
 
     public RecipeList listRecipes(String[] filters, boolean isTag) {
@@ -86,7 +90,7 @@ public class RecipeList extends ArrayList<Recipe> {
 
     public RecipeList listTagRecipes(String[] filters) {
         RecipeList filteredRecipeList = new RecipeList();
-        HashMap<Recipe, Integer> tagRecipes;
+        HashSet<Recipe> tagRecipes;
         boolean hasNoRecipeInTheTag;
         boolean hasNoRecipeToReturn;
         boolean isNotFoundTag;
@@ -97,7 +101,7 @@ public class RecipeList extends ArrayList<Recipe> {
             throw new NullPointerException("There is no \"" + filters[0] + "\" tag found. Please make sure you have " +
                     "entered the correct tag.");
         }
-        this.tags.get(filters[0].trim()).forEach((recipe, dummy) -> filteredRecipeList.add(recipe));
+        filteredRecipeList.addAll(this.tags.get(filters[0].trim()));
 
         for (String filter : filters) {
             filter = filter.trim();
@@ -113,7 +117,7 @@ public class RecipeList extends ArrayList<Recipe> {
             }
             for (int index = filteredRecipeList.size() - 1; index >= 0; index--) {
                 Recipe currentRecipe = filteredRecipeList.get(index);
-                if (!tagRecipes.containsKey(currentRecipe)) {
+                if (!tagRecipes.contains(currentRecipe)) {
                     filteredRecipeList.remove(currentRecipe);
                 }
             }
